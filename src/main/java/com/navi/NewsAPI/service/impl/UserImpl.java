@@ -2,7 +2,19 @@ package com.navi.NewsAPI.service.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class UserImpl {
@@ -21,6 +33,57 @@ public class UserImpl {
     }
     public boolean checkID(String id){
         return userMap.containsKey(id);
+    }
+
+    public boolean checkCategory(String category, String apiKey){
+//        RestTemplate restTemplate = new RestTemplate();
+//        String url = "https://newsapi.org/v2/top-headlines?category=" + category + "&apiKey=" + apiKey;
+//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+//        if (response.getStatusCode().is2xxSuccessful()) {
+//            String responseBody = response.getBody();
+//
+//            try {
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                JsonNode jsonNode = objectMapper.readTree(responseBody);
+//
+//                String status = jsonNode.get("status").asText();
+//                if (status == "ok") {
+//                    if (jsonNode.get("totalResults").asInt() > 0) {
+//                        return true;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return false;
+        return true;
+    }
+    public boolean checkCountry(String country, String apiKey){
+//        System.out.println("hi");
+//        RestTemplate restTemplate = new RestTemplate();
+//        String url = "https://newsapi.org/v2/top-headlines?category=" + country + "&apiKey=" + apiKey;
+//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+////        if (response.getStatusCode().is2xxSuccessful()) {
+//            String responseBody = response.getBody();
+//        System.out.println(responseBody);
+//            try {
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                JsonNode jsonNode = objectMapper.readTree(responseBody);
+//
+//                String status = jsonNode.get("status").asText();
+//                System.out.println(status);
+//                if (status == "ok") {
+//                    if (jsonNode.get("totalResults").asInt() > 0) {
+//                        return true;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+////        }
+//        return false;
+        return true;
     }
 
     public String createUser(String email, String category, String country){

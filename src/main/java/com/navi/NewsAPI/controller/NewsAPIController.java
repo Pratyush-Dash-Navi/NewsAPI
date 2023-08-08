@@ -48,65 +48,45 @@ public class NewsAPIController {
         newsImpl.editDataInCSV(country);
     }
 ///////////////////////////////////////////////////////////////////////
+    @Value("${apiKey}")
+    private String apiKey; // Load API key from application.properties
+
     @PostMapping(value = "/user")
     public ResponseEntity<?> newUser(
             @RequestParam("email") String email,
             @RequestParam("category") String category,
             @RequestParam("country") String country
     ){
-
         if(userimpl.checkEmail(email)){
-            return ResponseEntity.ok().body(userimpl.createUser(email,category,country));
+            if(userimpl.checkCategory(category,apiKey)){
+                if(userimpl.checkCountry(country,apiKey)){
+                    return ResponseEntity.ok().body(userimpl.createUser(email,category,country));
+                }
+                else{
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid country");
+                }
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category");
+            }
         }
-        else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email");
     }
 
-
-    @Value("${apiKey}")
-    private String apiKey; // Load your NewsAPI API key from application.properties
-
     @GetMapping("/top_headlines/{userId}")
-    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId) {
+    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId, @RequestParam("max-articles") String max_articles) {
 
-        if (! userimpl.checkID(userId)) {
+        if (!userimpl.checkID(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User profile not found");
         }
-
         String category = userimpl.getCategory(userId);
         String country = userimpl.getCountry(userId);
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
+        String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category + "&pagesize=" + max_articles + "&apiKey=" + apiKey;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String productsJson = response.getBody();
         System.out.println(productsJson);
         return response;
-
-
-
-
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url("https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category)
-//                .header("Authorization", "Bearer " + apiKey)
-//                .build();
-//
-//        try (Response response = client.newCall(request).execute()) {
-//            if (response.isSuccessful()) {
-//                String responseBody = response.body().string();
-//
-//                ObjectMapper objectMapper = new ObjectMapper();
-//                NewsApiResponse newsApiResponse = objectMapper.readValue(responseBody, NewsApiResponse.class);
-//
-//                return ResponseEntity.ok(newsApiResponse.getArticles());
-//            } else {
-//                return ResponseEntity.status(response.code()).body("Failed to fetch top headlines");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
-//        }
     }
-
 }
