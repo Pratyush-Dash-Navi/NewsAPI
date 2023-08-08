@@ -45,4 +45,32 @@ class NewsAPIControllerTest {
     @Test
     void testEditCountries() {
     }
+
+    @Test
+    void testPrint1() {
+    }
+
+    @Test
+    void testCategories1() {
+    }
+
+    @Test
+    void testCountries1() {
+    }
+
+    @Test
+    void testReadCountries1() {
+    }
+
+    @Test
+    void testEditCountries1() {
+    }
+
+    @Test
+    void newUser() {
+    }
+
+    @Test
+    void getTopHeadlines() {
+    }
 }
