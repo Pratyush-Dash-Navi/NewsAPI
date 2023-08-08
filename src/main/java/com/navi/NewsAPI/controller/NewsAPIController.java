@@ -32,4 +32,9 @@ public class NewsAPIController {
         return newsImpl.readDataFromCSV();
     }
 
+    @PostMapping(value = "/editCSV")
+    public void editCountries(@RequestParam("Country to be added") String[] country) throws IOException{
+        newsImpl.editDataInCSV(country);
+    }
+
 }

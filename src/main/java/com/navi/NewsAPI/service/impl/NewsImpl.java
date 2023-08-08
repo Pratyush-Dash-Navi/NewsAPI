@@ -11,6 +11,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 @Component
 public class NewsImpl {
@@ -34,22 +35,11 @@ public class NewsImpl {
     }
 
     // Method to write data to CSV file
-    public static void writeDataToCSV(List<String[]> data) throws IOException {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(FILE_PATH))) {
-            writer.writeAll(data);
+    public static void editDataInCSV(String[] data) throws IOException {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(FILE_PATH, true))) {
+            writer.writeAll(Collections.singleton(data));
         }
     }
-
-//    public List<String> readFromCSV() {
-//        List<String> countries = new ArrayList<>();
-//        try(FileWriter writer = new FileWriter("/Users/pratyushdash/Downloads/NewsAPI/src/main/resources/lists.csv")){
-//            for()
-//        }
-//        catch (IOException e){
-//            System.out.println("IOE");
-//            e.printStackTrace();
-//        }
-//    }
 
     public List<String> printCategories(){
         for(String s : categories){
