@@ -53,12 +53,18 @@ public class NewsAPIController {
     public ResponseEntity<?> newUser(
             @RequestParam("email") String email,
             @RequestParam("category") String category,
-            @RequestParam("country") String country
+            @RequestParam("country") String country,
+            @RequestParam("preferences") String[] preferences
     ){
         if(userimpl.checkEmail(email)){
             if(userimpl.checkCategory(category,apiKey)){
                 if(userimpl.checkCountry(country,apiKey)){
-                    return ResponseEntity.ok().body(userimpl.createUser(email,category,country));
+                    if(userimpl.checkPreferences(category,country,preferences,apiKey)){
+                        return ResponseEntity.ok().body(userimpl.createUser(email,category,country,preferences));
+                    }
+                    else{
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid preferences");
+                    }
                 }
                 else{
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid country");

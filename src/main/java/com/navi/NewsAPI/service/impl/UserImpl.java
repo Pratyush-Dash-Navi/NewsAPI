@@ -72,30 +72,71 @@ public class UserImpl {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&apiKey=" + apiKey;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-//        if (response.getStatusCode().is2xxSuccessful()) {
-            String responseBody = response.getBody();
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
+        String responseBody = response.getBody();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
 
-                String status = jsonNode.get("status").asText();
-                System.out.println(status);
-                if (Objects.equals(status, "ok") == true) {
-                    int total = jsonNode.get("totalResults").asInt();
-                    if (total > 0) {
-                        return true;
+            String status = jsonNode.get("status").asText();
+            System.out.println(status);
+            if (Objects.equals(status, "ok") == true) {
+                int total = jsonNode.get("totalResults").asInt();
+                if (total > 0) {
+                    return true;
+                }
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return false;
+    }
+    public boolean checkPreference(String category, String country, String preference, String apiKey){
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://newsapi.org/v2/top-headlines/sources?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        String responseBody = response.getBody();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            String status = jsonNode.get("status").asText();
+            System.out.println(status);
+            int length = jsonNode.get("sources").size();
+            if(length < 1){
+                return false;
+            }
+
+            JsonNode sourcesNode = jsonNode.get("sources");
+            if (sourcesNode != null && sourcesNode.isArray()) {
+                Iterator<JsonNode> sourcesIterator = sourcesNode.elements();
+                while (sourcesIterator.hasNext()) {
+                    JsonNode sourceNode = sourcesIterator.next();
+                    JsonNode idNode = sourceNode.get("id");
+                    if (idNode != null) {
+                        if(Objects.equals(preference, idNode.asText())){
+                            return true;
+                        }
                     }
                 }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
-//        return true;
     }
-
-    public String createUser(String email, String category, String country){
+    public boolean checkPreferences(String category, String country, String[] preferences, String apiKey){
+        boolean flag = true;
+        for(String preference : preferences){
+            if(! checkPreference(category, country,preference,apiKey)){
+                flag = false;
+                return false;
+            }
+        }
+        return flag;
+    }
+    public String createUser(String email, String category, String country, String[] preferences){
         String id = UUID.randomUUID().toString();
-        User user = new User(id,email,category,country);
+        User user = new User(id,email,category,country,preferences);
         userMap.put(id, user);
         mails.put(email,true);
         return id;
