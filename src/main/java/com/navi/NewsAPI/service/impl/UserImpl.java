@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.navi.NewsAPI.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class UserImpl {
 
-    public HashMap<String, String[]> userMap = new HashMap<>();
+    public HashMap<String, User> userMap = new HashMap<>();
 
     public HashMap<String, Boolean> mails = new HashMap<>();
 
@@ -94,14 +95,15 @@ public class UserImpl {
 
     public String createUser(String email, String category, String country){
         String id = UUID.randomUUID().toString();
-        userMap.put(id, new String[]{email, category, country});
+        User user = new User(id,email,category,country);
+        userMap.put(id, user);
         mails.put(email,true);
         return id;
     }
     public String getCategory(String id){
-        return userMap.get(id)[1];
+        return userMap.get(id).fetchCategory();
     }
     public String getCountry(String id){
-        return userMap.get(id)[2];
+        return userMap.get(id).fetchCountry();
     }
 }

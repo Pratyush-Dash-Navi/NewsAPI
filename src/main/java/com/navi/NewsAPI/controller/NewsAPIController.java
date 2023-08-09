@@ -71,8 +71,8 @@ public class NewsAPIController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email");
     }
 
-    @GetMapping("/top_headlines/{userId}")
-    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId, @RequestParam("max-articles") String max_articles) {
+    @GetMapping("/sources/{userId}")
+    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId) {
 
         if (!userimpl.checkID(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User profile not found");
@@ -81,7 +81,7 @@ public class NewsAPIController {
         String country = userimpl.getCountry(userId);
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category + "&pagesize=" + max_articles + "&apiKey=" + apiKey;
+        String url = "https://newsapi.org/v2/top-headlines/sources?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String productsJson = response.getBody();
         System.out.println(productsJson);
