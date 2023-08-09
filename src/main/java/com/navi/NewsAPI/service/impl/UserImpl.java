@@ -147,4 +147,33 @@ public class UserImpl {
     public String getCountry(String id){
         return userMap.get(id).fetchCountry();
     }
+
+    public ResponseEntity<?> fetchHeadlines(String responseBody, String userID){
+        List<String> headlines = new ArrayList<>();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+            JsonNode articlesNode = jsonNode.get("articles");
+            System.out.println(articlesNode);
+            if (articlesNode.isArray()) {
+                Iterator<JsonNode> sourcesIterator = articlesNode.elements();
+                while (sourcesIterator.hasNext()) {
+                    JsonNode articleNode = sourcesIterator.next();
+                    JsonNode idNode = articleNode.get("source").get("id");
+                    if (idNode != null) {
+                        User tempUser = userMap.get(userID);
+
+                        if(!tempUser.matchPreference(idNode.asText())){
+                        }
+                        else {
+                            headlines.add("source:"+ idNode.asText() + "    headline: " + articleNode.get("title").asText());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().body(headlines);
+    }
 }

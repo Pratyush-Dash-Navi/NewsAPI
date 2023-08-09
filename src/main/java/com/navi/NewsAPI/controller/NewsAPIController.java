@@ -78,7 +78,7 @@ public class NewsAPIController {
     }
 
     @GetMapping("/sources/{userId}")
-    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId) {
+    public ResponseEntity<?> getSources(@PathVariable String userId) {
 
         if (!userimpl.checkID(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User profile not found");
@@ -92,5 +92,21 @@ public class NewsAPIController {
         String productsJson = response.getBody();
         System.out.println(productsJson);
         return response;
+    }
+    @GetMapping("/top-headlines/{userId}")
+    public ResponseEntity<?> getTopHeadlines(@PathVariable String userId) {
+
+        if (!userimpl.checkID(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User profile not found");
+        }
+        String category = userimpl.getCategory(userId);
+        String country = userimpl.getCountry(userId);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        String productsJson = response.getBody();
+        System.out.println(productsJson);
+        return userimpl.fetchHeadlines(productsJson,userId);
     }
 }
