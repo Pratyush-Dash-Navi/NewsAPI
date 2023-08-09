@@ -163,7 +163,7 @@ public class UserImpl {
                     if (idNode != null) {
                         User tempUser = userMap.get(userID);
 
-                        if(!tempUser.matchPreference(idNode.asText())){
+                        if(tempUser.preferencePresent() &&  !tempUser.matchPreference(idNode.asText())){
                         }
                         else {
                             headlines.add("source:"+ idNode.asText() + "    headline: " + articleNode.get("title").asText());

@@ -33,4 +33,10 @@ public class User {
         }
         return false;
     }
+    public boolean preferencePresent(){
+        if(preferences.isEmpty()){
+            return false;
+        }
+        return true;
+    }
 }
