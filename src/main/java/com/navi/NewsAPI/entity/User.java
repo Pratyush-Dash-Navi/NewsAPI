@@ -1,26 +1,32 @@
 package com.navi.NewsAPI.entity;
 
-import org.springframework.stereotype.Repository;
-
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
+@Entity
+@Table(name="news_user")
 public class User {
-    private String userID;
+    @Id
+    private String userId;
     private String email;
     private String category;
     private String country;
-    private HashMap<String,Boolean> preferences;
+    private String[] preferenceList;
 
     public User(String userID, String email, String category, String country, String[] preferences){
-        this.userID = userID;
+        this.userId = userID;
         this.email = email;
         this.category = category;
         this.country = country;
-        this.preferences = new HashMap<>();
-        for(String s: preferences){
-            this.preferences.put(s,true);
-        }
+        this.preferenceList = preferences;
     }
+    public User() {    }
+
     public String fetchCategory(){
         return category;
     }
@@ -28,13 +34,17 @@ public class User {
         return country;
     }
     public boolean matchPreference(String pref){
-        if(preferences.containsKey(pref)){
-            return true;
+        if((preferenceList.length != 0)){
+            for(String p: preferenceList){
+                if(Objects.equals(p, pref)){
+                    return true;
+                }
+            }
         }
         return false;
     }
     public boolean preferencePresent(){
-        if(preferences.isEmpty()){
+        if(preferenceList.length == 0){
             return false;
         }
         return true;

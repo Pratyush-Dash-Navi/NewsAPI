@@ -6,19 +6,18 @@ import java.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navi.NewsAPI.entity.User;
-import org.springframework.http.HttpStatus;
+import com.navi.NewsAPI.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 
 @Component
 public class UserImpl {
+
+    @Autowired
+    private UserRepository userRepository;
 
     public HashMap<String, User> userMap = new HashMap<>();
 
@@ -139,6 +138,7 @@ public class UserImpl {
         User user = new User(id,email,category,country,preferences);
         userMap.put(id, user);
         mails.put(email,true);
+        User savedUser = userRepository.save(user);
         return id;
     }
     public String getCategory(String id){
