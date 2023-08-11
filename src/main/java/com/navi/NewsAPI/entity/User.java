@@ -3,9 +3,6 @@ package com.navi.NewsAPI.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 @Entity

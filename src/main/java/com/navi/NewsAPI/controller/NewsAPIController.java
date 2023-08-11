@@ -1,5 +1,9 @@
 package com.navi.NewsAPI.controller;
 
+import com.navi.NewsAPI.entity.Apicalls;
+import com.navi.NewsAPI.entity.User;
+import com.navi.NewsAPI.repository.ApiCallsRepository;
+import com.navi.NewsAPI.repository.UserRepository;
 import com.navi.NewsAPI.service.impl.NewsImpl;
 import com.navi.NewsAPI.service.impl.UserImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,8 @@ public class NewsAPIController {
 
     private final UserImpl userimpl;
 
+    @Autowired
+    private ApiCallsRepository apiCallsRepository;
     @Autowired
     public NewsAPIController(NewsImpl newsImpl, UserImpl userimpl) {
         this.newsImpl = newsImpl;
@@ -90,13 +96,12 @@ public class NewsAPIController {
         }
         String category = userimpl.getCategory(userId);
         String country = userimpl.getCountry(userId);
-
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://newsapi.org/v2/top-headlines/sources?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        String productsJson = response.getBody();
+        ResponseEntity<String> responses = restTemplate.getForEntity(url, String.class);
+        String productsJson = responses.getBody();
         System.out.println(productsJson);
-        return response;
+        return responses;
     }
     @GetMapping("/top-headlines/{userId}")
     public ResponseEntity<?> getTopHeadlines(@PathVariable String userId) {
@@ -107,10 +112,22 @@ public class NewsAPIController {
         String category = userimpl.getCategory(userId);
         String country = userimpl.getCountry(userId);
 
+        long startTime = System.currentTimeMillis();
+
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://newsapi.org/v2/top-headlines?country=" + country + "&category=" + category + "&apiKey=" + apiKey;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String productsJson = response.getBody();
+
+        long endTime = System.currentTimeMillis();
+        int timeTaken = (int) (endTime - startTime);
+        String endpoint = "/top-headlines/{userId}";
+        String request = url;
+        String responses = productsJson;
+        Apicalls apicalls = new Apicalls(endpoint, request, responses, timeTaken);
+        apiCallsRepository.save(apicalls);
+
+
         System.out.println(productsJson);
         return userimpl.fetchHeadlines(productsJson,userId);
     }

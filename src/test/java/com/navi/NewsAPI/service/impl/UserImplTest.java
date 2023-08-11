@@ -27,7 +27,7 @@ public class UserImplTest {
                 "{\"source\":{\"id\":\"abc-news\"},\"title\":\"Headline\"}]}";
         String userID = "123";
 
-        userImpl.userMap.put(userID, new User(userID, "user@example.com", "business", "us", any()));
+        userImpl.userMap.put(userID, new User(userID, "user@example.com", "business", "us", new String[]{"cnn"}));
 
         ResponseEntity<?> response = userImpl.fetchHeadlines(responseBody, userID);
 
