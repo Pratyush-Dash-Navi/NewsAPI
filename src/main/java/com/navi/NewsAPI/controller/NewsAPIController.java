@@ -16,11 +16,16 @@ import java.util.List;
 @RestController
 public class NewsAPIController {
 
-    @Autowired
-    private NewsImpl newsImpl;
+    private final NewsImpl newsImpl;
+
+    private final UserImpl userimpl;
 
     @Autowired
-    private UserImpl userimpl;
+    public NewsAPIController(NewsImpl newsImpl, UserImpl userimpl) {
+        this.newsImpl = newsImpl;
+        this.userimpl = userimpl;
+
+    }
 
     @GetMapping(value = "/")
     public String print(){
